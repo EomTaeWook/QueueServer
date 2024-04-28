@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Share\Protocol.QueueHubAndClient\Protocol.QueueHubAndClient.csproj" />
+    <ProjectReference Include="..\Share\ShareModels\ShareModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CommandSystem">
+      <HintPath>..\Dll\CommandSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Dignus">
+      <HintPath>..\Dll\Dignus.dll</HintPath>
+    </Reference>
+    <Reference Include="Dignus.Extensions">
+      <HintPath>..\Dll\Dignus.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Dignus.Extensions.AspNetCore">
+      <HintPath>..\Dll\Dignus.Extensions.AspNetCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Dignus.Sockets">
+      <HintPath>..\Dll\Dignus.Sockets.dll</HintPath>
+    </Reference>
+    <Reference Include="GameUtils">
+      <HintPath>..\Dll\GameUtils.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
