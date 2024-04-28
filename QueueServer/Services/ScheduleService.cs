@@ -1,7 +1,7 @@
 ﻿using Dignus.DependencyInjection.Attributes;
 using Dignus.Log;
 using Protocol.QueueHubAndClient;
-using QueueHubServer.Internals;
+using QueueServer.Internals;
 using QueueServer.Internals.Interface;
 
 namespace QueueServer.Services

@@ -3,7 +3,7 @@ using Dignus.Log;
 using GameUtils;
 using System.Text.Json;
 
-namespace QueueHubServer.Service
+namespace QueueServer.Services
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Singleton)]
     public class SecurityService

@@ -1,6 +1,6 @@
 ﻿using ShareModels.Network.Interface;
 
-namespace QueueHubServer.Models
+namespace QueueServer.Models
 {
     public class ErrorResponse(string errorMessage) : IAPIResponse
     {

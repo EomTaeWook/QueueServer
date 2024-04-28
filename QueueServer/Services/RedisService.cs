@@ -2,7 +2,7 @@
 using QueueServer.Models;
 using StackExchange.Redis;
 
-namespace QueueHubServer.Service
+namespace QueueServer.Services
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Singleton)]
     public class RedisService

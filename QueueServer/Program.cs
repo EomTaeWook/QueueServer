@@ -3,7 +3,6 @@ using Dignus.Extensions.AspNetCore;
 using Dignus.Extensions.Log;
 using Dignus.Log;
 using Protocol.QueueHubAndClient;
-using QueueHubServer.Internals;
 using QueueServer.Internals;
 using QueueServer.Internals.Interface;
 using QueueServer.Models;
@@ -60,6 +59,12 @@ internal class Program
                 ServerName = ShareModels.Consts.ServerName,
                 SessionIncreaseCount = 1,
             });
+            return Task.CompletedTask;
+        });
+
+        localCmdModule.AddCommandAction("purge", "만료 토큰 갱신", (args, cancellationToken) =>
+        {
+            var response = RequestHelper.Request<PurgeExpiredTickets, PurgeExpiredTicketsResponse>(new PurgeExpiredTickets());
             return Task.CompletedTask;
         });
 

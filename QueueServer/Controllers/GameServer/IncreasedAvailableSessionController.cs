@@ -1,9 +1,9 @@
 ﻿using Protocol.QueueHubAndClient;
-using QueueHubServer.Internals;
-using QueueHubServer.Service;
+using QueueServer.Internals;
+using QueueServer.Services;
 using ShareModels.Network.Interface;
 
-namespace QueueHubServer.Controllers.GameServer
+namespace QueueServer.Controllers.GameServer
 {
     public class IncreasedAvailableSessionController : APIController<IncreasedAvailableSession>
     {

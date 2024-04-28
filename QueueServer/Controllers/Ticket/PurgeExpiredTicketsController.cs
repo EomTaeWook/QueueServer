@@ -1,9 +1,9 @@
 ﻿using Protocol.QueueHubAndClient;
-using QueueHubServer.Internals;
-using QueueHubServer.Service;
+using QueueServer.Internals;
+using QueueServer.Services;
 using ShareModels.Network.Interface;
 
-namespace QueueHubServer.Controllers.Ticket
+namespace QueueServer.Controllers.Ticket
 {
     public class PurgeExpiredTicketsController : APIController<PurgeExpiredTickets>
     {
@@ -20,7 +20,7 @@ namespace QueueHubServer.Controllers.Ticket
             foreach (var ticket in candidateTickets)
             {
                 var memberKey = $"{Consts.WaitingQueueTicketKey}{ticket}";
-                if (!(await redisDB.KeyExistsAsync(memberKey)))
+                if (!await redisDB.KeyExistsAsync(memberKey))
                 {
                     await redisDB.SortedSetRemoveAsync(Consts.WaitingQueueKey, ticket);
                     removedCount++;

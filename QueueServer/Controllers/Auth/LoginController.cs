@@ -1,34 +1,27 @@
-﻿using Dignus.Log;
-using Protocol.QueueHubAndClient;
-using QueueHubServer.Internals;
-using QueueHubServer.Models;
-using QueueHubServer.Service;
+﻿using Protocol.QueueHubAndClient;
+using QueueServer.Internals;
+using QueueServer.Services;
 using ShareModels.Network.Interface;
-using System.Text.Json;
 
-namespace QueueHubServer.Controllers.Auth
+namespace QueueServer.Controllers.Auth
 {
     public class LoginController : APIController<Login>
     {
         private readonly RedisService _redisService;
-        private readonly SecurityService _securityService;
+        private readonly TicketHelperService _ticketHelperService;
         public LoginController(RedisService redisService,
-            SecurityService securityService)
+            TicketHelperService ticketHelperService)
         {
+            _ticketHelperService = ticketHelperService;
             _redisService = redisService;
-            _securityService = securityService;
         }
+
         protected override async Task<IAPIResponse> Process(Login request)
         {
-            TicketModel ticketModel;
-            try
+            var ticketModel = _ticketHelperService.Deserialize(request.EntryTicket);
+
+            if (ticketModel == null)
             {
-                var decryptJson = _securityService.DecryptString(request.EntryTicket);
-                ticketModel = JsonSerializer.Deserialize<TicketModel>(decryptJson);
-            }
-            catch (Exception e)
-            {
-                LogHelper.Error(e);
                 return MakeCommonErrorMessage("invalid ticket");
             }
 

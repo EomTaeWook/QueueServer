@@ -1,4 +1,4 @@
-﻿namespace QueueHubServer.Internals
+﻿namespace QueueServer.Internals
 {
     public class Consts
     {

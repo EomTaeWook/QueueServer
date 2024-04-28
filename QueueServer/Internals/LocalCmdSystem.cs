@@ -11,6 +11,7 @@ namespace QueueServer.Internals
         {
             _localCmd = localCmd;
         }
+
         public Task StartAsync()
         {
             return Task.Run(() =>

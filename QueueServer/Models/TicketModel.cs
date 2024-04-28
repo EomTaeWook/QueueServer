@@ -1,4 +1,4 @@
-﻿namespace QueueHubServer.Models
+﻿namespace QueueServer.Models
 {
     public class TicketModel
     {

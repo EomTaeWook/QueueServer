@@ -2,7 +2,7 @@
 using Dignus.Log;
 using System.Reflection;
 
-namespace QueueHubServer.Internals
+namespace QueueServer.Internals
 {
     public class RequestValidator
     {

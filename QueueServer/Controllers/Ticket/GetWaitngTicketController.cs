@@ -1,10 +1,10 @@
 using Protocol.QueueHubAndClient;
-using QueueHubServer.Internals;
-using QueueHubServer.Models;
-using QueueHubServer.Service;
+using QueueServer.Internals;
+using QueueServer.Models;
+using QueueServer.Services;
 using ShareModels.Network.Interface;
 
-namespace QueueHubServer.Controllers.Ticket
+namespace QueueServer.Controllers.Ticket
 {
     public class GetWaitngTicketController : APIController<GetWaitngTicket>
     {

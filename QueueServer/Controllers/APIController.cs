@@ -1,11 +1,11 @@
 ﻿using Dignus.Log;
 using Microsoft.AspNetCore.Mvc;
-using QueueHubServer.Internals;
-using QueueHubServer.Models;
+using QueueServer.Internals;
+using QueueServer.Models;
 using ShareModels.Network.Interface;
 using System.Runtime.CompilerServices;
 
-namespace QueueHubServer.Controllers
+namespace QueueServer.Controllers
 {
     [Route("[controller]")]
     public abstract class APIController<T> : ControllerBase where T : IAPIRequest

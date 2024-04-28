@@ -2,7 +2,7 @@
 using GameUtils.Extensions;
 using System.Text.Json;
 
-namespace QueueHubServer.Internals
+namespace QueueServer.Internals
 {
     internal static class RequestHelper
     {

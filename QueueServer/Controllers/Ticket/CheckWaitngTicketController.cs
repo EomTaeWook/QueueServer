@@ -1,39 +1,32 @@
-using Dignus.Log;
 using Protocol.QueueHubAndClient;
-using QueueHubServer.Internals;
-using QueueHubServer.Models;
-using QueueHubServer.Service;
+using QueueServer.Internals;
+using QueueServer.Services;
 using ShareModels.Network.Interface;
-using System.Text.Json;
 
-namespace QueueHubServer.Controllers.Ticket
+namespace QueueServer.Controllers.Ticket
 {
     public class CheckWaitngTicketController : APIController<CheckWaitngTicket>
     {
         private readonly RedisService _redisService;
-        private readonly SecurityService _securityService;
+        private readonly TicketHelperService _ticketHelperService;
         public CheckWaitngTicketController(RedisService redisService,
-            SecurityService securityService)
+            TicketHelperService ticketHelperService)
         {
             _redisService = redisService;
-            _securityService = securityService;
+            _ticketHelperService = ticketHelperService;
         }
         protected override async Task<IAPIResponse> Process(CheckWaitngTicket request)
         {
-            try
-            {
-                var decryptJson = _securityService.DecryptString(request.Ticket);
-                var ticketModel = JsonSerializer.Deserialize<TicketModel>(decryptJson);
+            var ticketModel = _ticketHelperService.Deserialize(request.Ticket);
 
-                if (ticketModel.ExpirationTimeTicks < DateTime.Now.Ticks)
-                {
-                    return MakeCommonErrorMessage("the ticket has expired. please request a new ticket");
-                }
-            }
-            catch (Exception e)
+            if (ticketModel == null)
             {
-                LogHelper.Error(e);
                 return MakeCommonErrorMessage("invalid ticket");
+            }
+
+            if (ticketModel.ExpirationTimeTicks < DateTime.Now.Ticks)
+            {
+                return MakeCommonErrorMessage("the ticket has expired. please request a new ticket");
             }
 
             var redisDB = _redisService.GetDatabase();
@@ -81,19 +74,15 @@ namespace QueueHubServer.Controllers.Ticket
             }
             return new CheckWaitngTicketResponse()
             {
-                WaitingCount = waitingCount.Value,
+                WaitingCount = waitingCount.Value + 1,
                 Ok = true,
                 EntryTicket = entryTicket,
             };
         }
         private string GetEntryTicket(string accountId)
         {
-            return _securityService.Encrypt(new TicketModel()
-            {
-                AccountId = accountId,
-                IP = ControllerContext.HttpContext.Connection.RemoteIpAddress.ToString(),
-                ExpirationTimeTicks = DateTime.Now.AddMinutes(10).Ticks
-            });
+            return _ticketHelperService.Generation(accountId,
+                HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
         }
     }
 }
