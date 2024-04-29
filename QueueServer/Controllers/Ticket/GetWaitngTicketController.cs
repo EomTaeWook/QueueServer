@@ -1,4 +1,4 @@
-using Protocol.QueueHubAndClient;
+using Protocol.QueueServerAndClient;
 using QueueServer.Internals;
 using QueueServer.Models;
 using QueueServer.Services;

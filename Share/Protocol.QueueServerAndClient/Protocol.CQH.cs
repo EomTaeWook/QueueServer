@@ -1,6 +1,6 @@
 ﻿using ShareModels.Network.Interface;
 
-namespace Protocol.QueueHubAndClient
+namespace Protocol.QueueServerAndClient
 {
     public interface ICQHRequest : IAPIRequest
     {

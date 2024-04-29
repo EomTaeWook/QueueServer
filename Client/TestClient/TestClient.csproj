@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Share\Protocol.QueueHubAndClient\Protocol.QueueHubAndClient.csproj" />
+    <ProjectReference Include="..\..\Share\Protocol.QueueServerAndClient\Protocol.QueueServerAndClient.csproj" />
+    <ProjectReference Include="..\..\Share\ShareModels\ShareModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>

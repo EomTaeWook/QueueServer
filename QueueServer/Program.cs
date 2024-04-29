@@ -2,7 +2,7 @@ using CommandSystem;
 using Dignus.Extensions.AspNetCore;
 using Dignus.Extensions.Log;
 using Dignus.Log;
-using Protocol.QueueHubAndClient;
+using Protocol.QueueServerAndClient;
 using QueueServer.Internals;
 using QueueServer.Internals.Interface;
 using QueueServer.Models;

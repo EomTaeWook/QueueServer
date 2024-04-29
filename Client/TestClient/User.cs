@@ -1,4 +1,4 @@
-﻿using Protocol.QueueHubAndClient;
+﻿using Protocol.QueueServerAndClient;
 
 namespace TestClient
 {

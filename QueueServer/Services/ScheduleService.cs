@@ -1,6 +1,6 @@
 ﻿using Dignus.DependencyInjection.Attributes;
 using Dignus.Log;
-using Protocol.QueueHubAndClient;
+using Protocol.QueueServerAndClient;
 using QueueServer.Internals;
 using QueueServer.Internals.Interface;
 

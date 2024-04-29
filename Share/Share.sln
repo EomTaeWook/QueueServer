@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShareModels", "ShareModels\ShareModels.csproj", "{7501CC79-29B7-4262-A249-1C368376AB65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Protocol.QueueServerAndClient", "Protocol.QueueServerAndClient\Protocol.QueueServerAndClient.csproj", "{8E8CDAE3-CF2F-4F72-A120-F6B54143DCDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7501CC79-29B7-4262-A249-1C368376AB65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7501CC79-29B7-4262-A249-1C368376AB65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7501CC79-29B7-4262-A249-1C368376AB65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7501CC79-29B7-4262-A249-1C368376AB65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E8CDAE3-CF2F-4F72-A120-F6B54143DCDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E8CDAE3-CF2F-4F72-A120-F6B54143DCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E8CDAE3-CF2F-4F72-A120-F6B54143DCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E8CDAE3-CF2F-4F72-A120-F6B54143DCDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC44BC14-A680-4B63-A731-CB78FD973582}
+	EndGlobalSection
+EndGlobal
