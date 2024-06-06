@@ -1,6 +1,6 @@
 ﻿using Dignus.DependencyInjection.Attributes;
 using Dignus.Log;
-using GameUtils;
+using GameUtils.Crypto;
 using System.Text.Json;
 
 namespace QueueServer.Services

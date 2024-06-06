@@ -1,5 +1,5 @@
-﻿using GameUtils;
-using GameUtils.Extensions;
+﻿using Dignus.Utils;
+using Dignus.Utils.Extensions;
 using System.Text.Json;
 
 namespace QueueServer.Internals

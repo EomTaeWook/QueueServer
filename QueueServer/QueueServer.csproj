@@ -31,6 +31,9 @@
     <Reference Include="Dignus.Sockets">
       <HintPath>..\Dll\Dignus.Sockets.dll</HintPath>
     </Reference>
+    <Reference Include="Dignus.Utils">
+      <HintPath>..\Dll\Dignus.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="GameUtils">
       <HintPath>..\Dll\GameUtils.dll</HintPath>
     </Reference>
