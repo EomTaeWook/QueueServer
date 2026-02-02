@@ -30,26 +30,32 @@ namespace QueueServer.Controllers.Auth
                 return MakeCommonErrorMessage("the entry ticket has expired.");
             }
 
-            var memberKey = $"{Consts.WaitingQueueTicketKey}{request.WaitingTicket}";
+            if (ticketModel.AccountId != request.AccountId)
+            {
+                return MakeCommonErrorMessage("ticket ownership mismatch");
+            }
 
             var redisDB = _redisService.GetDatabase();
 
-            var trans = redisDB.CreateTransaction();
-            var removeWaitingKey = trans.SortedSetRemoveAsync(Consts.WaitingQueueKey, request.WaitingTicket);
-            var removeMemberKey = trans.KeyDeleteAsync(memberKey);
-            var currentSessions = trans.StringDecrementAsync($"{Consts.AvailableSessionsServerKey}{request.ServerName}", 1);
+            var serverSessionCountKey = $"{Consts.AvailableSessionsServerKey}{request.ServerName}";
 
+            var sessionsCount = await redisDB.StringDecrementAsync(serverSessionCountKey, 1);
+
+            if (sessionsCount < 0)
+            {
+                await redisDB.StringIncrementAsync(serverSessionCountKey);
+                return MakeCommonErrorMessage("no available sessions");
+            }
+
+            var trans = redisDB.CreateTransaction();
+            _ = trans.SortedSetRemoveAsync(Consts.WaitingQueueKey, request.WaitingTicket);
+            _ = trans.SortedSetRemoveAsync(Consts.ExpirationQueueKey, request.WaitingTicket);
             var executed = await trans.ExecuteAsync();
 
             if (!executed)
             {
+                await redisDB.StringIncrementAsync(serverSessionCountKey);
                 return MakeCommonErrorMessage("transaction failed");
-            }
-            long sessionsCount = await currentSessions;
-            if (sessionsCount < 0)
-            {
-                await redisDB.StringSetAsync($"{Consts.AvailableSessionsServerKey}{request.ServerName}", 0);
-                return MakeCommonErrorMessage("no available sessions");
             }
 
             return new LoginResponse()

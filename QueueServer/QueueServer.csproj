@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dignus" Version="1.0.12" />
+    <PackageReference Include="Dignus.Extensions.DependencyInjection" Version="1.0.8" />
+    <PackageReference Include="Dignus.Extensions.Logging" Version="1.0.9" />
+    <PackageReference Include="Dignus.Log" Version="1.0.8" />
+    <PackageReference Include="Dignus.Sockets" Version="1.1.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
   </ItemGroup>
 
@@ -18,18 +23,6 @@
   <ItemGroup>
     <Reference Include="CommandSystem">
       <HintPath>..\Dll\CommandSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Dignus">
-      <HintPath>..\Dll\Dignus.dll</HintPath>
-    </Reference>
-    <Reference Include="Dignus.Extensions">
-      <HintPath>..\Dll\Dignus.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Dignus.Extensions.AspNetCore">
-      <HintPath>..\Dll\Dignus.Extensions.AspNetCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Dignus.Sockets">
-      <HintPath>..\Dll\Dignus.Sockets.dll</HintPath>
     </Reference>
     <Reference Include="Dignus.Utils">
       <HintPath>..\Dll\Dignus.Utils.dll</HintPath>

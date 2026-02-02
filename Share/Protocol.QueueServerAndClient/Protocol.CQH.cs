@@ -12,6 +12,7 @@ namespace Protocol.QueueServerAndClient
     }
     public class CheckWaitngTicket : ICQHRequest
     {
+        public string AccountId { get; set; }
         public string Ticket { get; set; }
 
         public string ServerName { get; set; }
@@ -19,6 +20,7 @@ namespace Protocol.QueueServerAndClient
 
     public class Login : ICQHRequest
     {
+        public string AccountId { get; set; }
         public string WaitingTicket { get; set; }
         public string ServerName { get; set; }
         public string EntryTicket { get; set; }

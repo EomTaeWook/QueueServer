@@ -2,6 +2,7 @@
 using QueueServer.Internals;
 using QueueServer.Services;
 using ShareModels.Network.Interface;
+using StackExchange.Redis;
 
 namespace QueueServer.Controllers.Ticket
 {
@@ -14,21 +15,38 @@ namespace QueueServer.Controllers.Ticket
         }
         protected override async Task<IAPIResponse> Process(PurgeExpiredTickets request)
         {
-            var redisDB = _redisService.GetDatabase();
-            var candidateTickets = await redisDB.SortedSetRangeByRankAsync(Consts.WaitingQueueKey, 0, request.Range - 1, StackExchange.Redis.Order.Ascending);
-            var removedCount = 0;
-            foreach (var ticket in candidateTickets)
+            if (request.Range <= 0)
             {
-                var memberKey = $"{Consts.WaitingQueueTicketKey}{ticket}";
-                if (!await redisDB.KeyExistsAsync(memberKey))
-                {
-                    await redisDB.SortedSetRemoveAsync(Consts.WaitingQueueKey, ticket);
-                    removedCount++;
-                }
+                return new PurgeExpiredTicketsResponse { Ok = true, RemoveTicketCount = 0 };
             }
+
+            var redisDB = _redisService.GetDatabase();
+            var nowTicks = DateTime.Now.Ticks;
+
+            var expiredTickets = await redisDB.SortedSetRangeByScoreAsync(
+                Consts.ExpirationQueueKey,
+                start: double.NegativeInfinity,
+                stop: nowTicks,
+                exclude: Exclude.None,
+                order: Order.Ascending,
+                skip: 0,
+                take: request.Range);
+
+            if (expiredTickets.Length == 0)
+            {
+                return new PurgeExpiredTicketsResponse { Ok = true, RemoveTicketCount = 0 };
+            }
+
+            var batch = redisDB.CreateBatch();
+            var t1 = batch.SortedSetRemoveAsync(Consts.ExpirationQueueKey, expiredTickets);
+            var t2 = batch.SortedSetRemoveAsync(Consts.WaitingQueueKey, expiredTickets);
+            batch.Execute();
+
+            await Task.WhenAll(t1, t2);
+
             return new PurgeExpiredTicketsResponse()
             {
-                RemoveTicketCount = removedCount,
+                RemoveTicketCount = (int)expiredTickets.Length,
                 Ok = true,
             };
         }

@@ -1,6 +1,5 @@
 using CommandSystem;
-using Dignus.Extensions.AspNetCore;
-using Dignus.Extensions.Log;
+using Dignus.Extensions.DependencyInjection;
 using Dignus.Log;
 using Protocol.QueueServerAndClient;
 using QueueServer.Internals;

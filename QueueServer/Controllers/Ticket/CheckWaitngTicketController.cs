@@ -9,6 +9,7 @@ namespace QueueServer.Controllers.Ticket
     {
         private readonly RedisService _redisService;
         private readonly TicketHelperService _ticketHelperService;
+
         public CheckWaitngTicketController(RedisService redisService,
             TicketHelperService ticketHelperService)
         {
@@ -31,50 +32,68 @@ namespace QueueServer.Controllers.Ticket
 
             var redisDB = _redisService.GetDatabase();
 
-            var memberKey = $"{Consts.WaitingQueueTicketKey}{request.Ticket}";
-            var cacheSet = await redisDB.StringSetAsync(memberKey, request.Ticket, TimeSpan.FromSeconds(300));
+            var newExpirationTicks = DateTime.Now.Add(Consts.WaitingHeartbeatTtl).Ticks;
 
-            if (cacheSet == false)
+            var expireAtScore = await redisDB.SortedSetScoreAsync(Consts.ExpirationQueueKey, request.Ticket);
+
+            if (expireAtScore == null)
             {
-                return MakeCommonErrorMessage("failed to save or set expiration on wait ticket");
+                return MakeCommonErrorMessage("ticket is no longer active. please request a new ticket");
             }
 
-            var waitingCount = await redisDB.SortedSetRankAsync(Consts.WaitingQueueKey,
+            if (expireAtScore.Value <= DateTime.Now.Ticks)
+            {
+                _ = redisDB.SortedSetRemoveAsync(Consts.WaitingQueueKey, request.Ticket);
+                _ = redisDB.SortedSetRemoveAsync(Consts.ExpirationQueueKey, request.Ticket);
+
+                return MakeCommonErrorMessage("ticket is no longer active. please request a new ticket");
+            }
+
+            var refreshed = await redisDB.SortedSetAddAsync(Consts.ExpirationQueueKey, request.Ticket, newExpirationTicks);
+
+            if (!refreshed)
+            {
+                return MakeCommonErrorMessage("failed to refresh ticket heartbeat");
+            }
+
+            var rank = await redisDB.SortedSetRankAsync(Consts.WaitingQueueKey,
                 request.Ticket,
                 StackExchange.Redis.Order.Ascending);
 
-            if (waitingCount == null)
+            if (rank == null)
             {
                 return MakeCommonErrorMessage($"failed to load waitng count");
             }
 
-            var availableSessions = (int)await redisDB.StringGetAsync($"{Consts.AvailableSessionsServerKey}{request.ServerName}");
+            var waitingCount = rank.Value + 1;
+
+            var availableSessionsValue = await redisDB.StringGetAsync($"{Consts.AvailableSessionsServerKey}{request.ServerName}");
+
+            var availableSessions = 0;
+            if (availableSessionsValue.IsInteger)
+            {
+                availableSessions = (int)availableSessionsValue;
+            }
+
             if (availableSessions <= 0)
             {
                 return new CheckWaitngTicketResponse()
                 {
-                    WaitingCount = waitingCount.Value,
+                    WaitingCount = waitingCount,
                     Ok = true,
                 };
             }
 
-            var candidateTickets = await redisDB.SortedSetRangeByRankAsync(Consts.WaitingQueueKey,
-                0,
-                availableSessions - 1,
-                StackExchange.Redis.Order.Ascending);
-
             var entryTicket = string.Empty;
-            foreach (var ticket in candidateTickets)
+
+            if (availableSessions > 0 && rank.Value < availableSessions)
             {
-                if (ticket == request.Ticket)
-                {
-                    entryTicket = GetEntryTicket(request.ServerName);
-                    break;
-                }
+                entryTicket = GetEntryTicket(request.AccountId);
             }
+            
             return new CheckWaitngTicketResponse()
             {
-                WaitingCount = waitingCount.Value + 1,
+                WaitingCount = waitingCount,
                 Ok = true,
                 EntryTicket = entryTicket,
             };

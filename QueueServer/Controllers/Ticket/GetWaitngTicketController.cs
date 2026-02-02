@@ -19,20 +19,24 @@ namespace QueueServer.Controllers.Ticket
         protected override async Task<IAPIResponse> Process(GetWaitngTicket request)
         {
             var redisDB = _redisService.GetDatabase();
-            var ticket = GetTicket(request.AccountId);
-            var nowTicks = DateTime.Now.Ticks;
 
-            var memberKey = $"{Consts.WaitingQueueTicketKey}{ticket}";
-            var cacheSet = await redisDB.StringSetAsync(memberKey, ticket, TimeSpan.FromSeconds(300));
-            if (cacheSet == false)
+            var nowTime = DateTime.Now;
+            var expirationTimeTicks = nowTime.Add(Consts.WaitingHeartbeatTtl).Ticks;
+            var ticket = GetTicket(request.AccountId, expirationTimeTicks);
+
+            var savedQueue = await redisDB.SortedSetAddAsync(Consts.WaitingQueueKey, ticket, nowTime.Ticks);
+
+            if (!savedQueue)
             {
-                return MakeCommonErrorMessage("failed to save or set expiration on wait ticket");
+                return MakeCommonErrorMessage("failed to save wait ticket");
             }
 
-            var saved = await redisDB.SortedSetAddAsync(Consts.WaitingQueueKey, ticket, nowTicks);
-            if (saved == false)
+            var expireAtTicks = nowTime.Ticks + Consts.WaitingHeartbeatTtl.Ticks;
+            var savedExpiry = await redisDB.SortedSetAddAsync(Consts.ExpirationQueueKey, ticket, expireAtTicks);
+            if (!savedExpiry)
             {
-                return MakeCommonErrorMessage($"failed to save wait ticket");
+                _ = redisDB.SortedSetRemoveAsync(Consts.WaitingQueueKey, ticket);
+                return MakeCommonErrorMessage("failed to save wait ticket expiry");
             }
 
             return new GetWaitngTicketResponse()
@@ -41,13 +45,13 @@ namespace QueueServer.Controllers.Ticket
                 WaitingTicket = ticket,
             };
         }
-        private string GetTicket(string accountId)
+        private string GetTicket(string accountId, long expirationTimeTicks)
         {
             return _securityService.Encrypt(new TicketModel()
             {
                 AccountId = accountId,
                 IP = ControllerContext.HttpContext.Connection.RemoteIpAddress.ToString(),
-                ExpirationTimeTicks = DateTime.Now.AddMinutes(10).Ticks
+                ExpirationTimeTicks = expirationTimeTicks
             });
         }
     }
